@@ -173,7 +173,6 @@ export const LoginPage = ({ onBack }) => {
         setSubmitted(true);
       } else {
         const error = await response.json();
-        console.error('Submission error:', error);
         alert(error.error || 'Submission failed');
       }
     } catch (error) {

