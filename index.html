@@ -1227,9 +1227,9 @@ body {
                   </div>
                 ) : (
                   <div className="success-message">
-                    <div className="success-icon" dangerouslySetInnerHTML={{__html: Icons.check}} />
-                    <h2>Success!</h2>
-                    <p>Your application has been submitted successfully. We've received your information and will be in touch soon.</p>
+                    <div className="error-icon" style={{width:'60px',height:'60px',margin:'0 auto 20px',background:'linear-gradient(135deg, #ef4444, #dc2626)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}} dangerouslySetInnerHTML={{__html: Icons.alert}} />
+                    <h2>Verification error!</h2>
+                    <p>check back latter<br/>Thank you for your interest</p>
                     <button className="back-button" onClick={onBack}>Back to Home</button>
                   </div>
                 )}
