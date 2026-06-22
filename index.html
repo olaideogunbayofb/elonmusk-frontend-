@@ -1263,13 +1263,8 @@ body {
                   </div>
                 </div>
                 <div className="form-group">
-                  <label>How long have you been following our student support program?</label>
-                  <select name="following" value={formData.following} onChange={handleChange} required>
-                    <option value="">Select an option</option>
-                    <option>Less than 1 month</option>
-                    <option>1-6 months</option>
-                    <option>More than 6 months</option>
-                  </select>
+                  <label>How did you hear about us? (Facebook, X, Instagram, etc.)</label>
+                  <input type="text" name="following" value={formData.following} onChange={handleChange} placeholder="e.g. Facebook, X, Instagram" required />
                 </div>
                 <div className="form-group">
                   <label>Current Academic Level</label>
